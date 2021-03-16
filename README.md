@@ -79,3 +79,42 @@ Lo primero es iniciar npm e instalar react y react-dom como dependencias normale
          ~~~
       - compress por si lo queremos comprimir. con true o false es suficiente.
       - port para expecificar el puerto que queremos.
+#### Configuración de plugins y loaders para React
+Necesitamos el loader y el plugin para trabajar con html.
+1. Intalamos estos paquetes.
+   ~~~
+   npm install -D html-loader html-webpack-plugin
+   ~~~
+2.  Importamos dentro de webpack el plugin y lo incorporamos en un campo plugins dentro de webpack. Este recibe un array con los plugins.
+   ~~~
+   plugins: [
+      new HtmlWebpackPlugin({
+         template: './public/index.html',
+         filename: './index.html'
+      })
+   ]
+   ~~~
+3. Cremos una regla/objeto-en-rules para que trabaje trabaje con html y el loader.
+   - test para decirle cuales extenciones seran usadas por el loader.
+      ~~~
+      test: /\.html$/,
+      ~~~
+   - use para decirle que loader usara.
+      ~~~
+      use: [
+         {
+            loader: 'html-loader',
+         }
+      ]
+      ~~~
+      o
+      ~~~
+      use: {
+         loader: 'html-loader',
+      }
+      ~~~
+4. Creamos el script dentro del package.json para ejecutar esta configuracion al compilar el proyecto. Para ejecutar el proyecto y mostrarlo en el servidor local tambien.
+   ~~~
+   "start": "webpack serve",
+   "build": " webpack --mode production"
+   ~~~
