@@ -118,3 +118,45 @@ Necesitamos el loader y el plugin para trabajar con html.
    "start": "webpack serve",
    "build": " webpack --mode production"
    ~~~
+#### Configuración de Webpack para CSS en React
+Para configurar el css intallamos los plugin de css y loaders como dependencias de desarrollo. Necesitamos el minimizador de css y ademas los precompiladores como sass.
+1. Instalamos los paquetes necesarios.
+   ~~~
+   npm install -D mini-css-extract-plugin css-loader style-loader sass sass-loader
+   ~~~
+2. Configuramos todo en webpack.config.js
+   - Importamos el plugin de css "mini-css-extract-plugin"
+      ~~~
+      const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+      ~~~
+   - Creamos la regla para el css y trabajar con los loader.
+      ~~~
+      {
+         test: /\.s[ac]sss$/,
+         use: [
+            'style-loader',
+            'css-loader',
+            'sass-loader'
+         ],
+      },
+      ~~~
+      - Test para la exprecion regular que le dice que extencion revizar.
+      - use con un array con el nombre de cada loader para que sepa cuales usar.
+   - Agregamos el plugin en el apartado de plugins.
+      ~~~
+      new MiniCssExtractPlugin({
+         filename: '[name].css',
+      }),
+      ~~~
+      - Pasamos un objeto con solo la configuracion del nombre que tendra el css despues de configurarlo. El "[name]" es para decirle que le ponga el mismo nombre y .css es para que quede fijo con esa extencion.
+3. Creamos una carpeta styles dentro de src con un archivo global.scss para probar si todo el css funciona.
+   ~~~
+   $base-color: #c6538c;
+   $color: rgba(black, 0.88);
+
+   body {
+      background-color: $base-color;
+      color: $color;
+   }
+   ~~~
+4. Importamos/enlazamos el css dentro del index.js.
