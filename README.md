@@ -160,3 +160,67 @@ Para configurar el css intallamos los plugin de css y loaders como dependencias 
    }
    ~~~
 4. Importamos/enlazamos el css dentro del index.js.
+#### Optimización de Webpack para React
+Necesitamos dejar todo listo para produccion. Limpiar el dist minimizar los archivos y demas, tambien separamos las configuraciones de desarrollo de las de produccion.
+1. Cramos el archivo webpack.config.dev.js, pegamos toda la configuracion como esta y añadimos el modo de dessarrollo en este.
+   ~~~
+   // ...
+   mode: 'development',
+   module: {
+      // ...
+   ~~~
+2. Instalamos los plugins para las optimizaciones.
+   ~~~
+   npm install -D css-minimizer-webpack-plugin terser-webpack-plugin clean-webpack-plugin
+   ~~~
+3. En las configuraciones de produccion hacemos los cambios de optimizacion.
+   - Eliminamos la configuracion de devServer ya que solo es para desarrollo.
+   - Importamos los plugins minimizer de css, terser y clean.
+      ~~~
+      const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+      const TerserPlugin = require('terser-webpack-plugin');
+      const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+      ~~~
+   - Creamos dentro de output un publicPath ya que es necesario que se sepa que ruta tendra por defecto el proyecto al publicarlo.
+      ~~~
+      publicPath: "/",
+      ~~~
+   - Creamos los alias (Para las rutas que importamos en el proyecto. De esta manera quedan como variables.). Esto queda dentro de resolve como un objeto en alias.
+      ~~~
+      resolve: {
+         extensions: ['.js', '.jsx'],
+         alias: {
+            '@components': path.resolve(__dirname, 'src/components/'),
+            '@styles': path.resolve(__dirname, 'src/styles/'),
+         }
+      }
+      ~~~
+   - Añadimos la parte de optimizacion con un objeto que tendra las configuraciones.
+      - minimize que recive un boolean.
+      - minimizer que recive la configuracion de los plugin para esto.
+      ~~~
+      optimization: {
+         minimize: true,
+         minimizer: [
+            new CssMinimizerPlugin(),
+            new TerserPlugin(),
+         ],
+      },
+      ~~~
+   - Incluimos el plugin de limpieza del proyecto.
+      ~~~
+      new CleanWebpackPlugin(),
+      ~~~
+4. Incluimos el modo de produccion en estas configuraciones.
+   ~~~
+   mode: 'production',
+   ~~~
+5. Creamos el script en el package.json.
+   - Modificamos el star para que use las configuraciones de desarrollo.
+      ~~~
+      "start": "webpack serve --config webpack.config.dev.js",
+      ~~~
+   -modificamos el build para que sea el que use las configuraciones de produccion.
+      ~~~
+      "build": "webpack --config webpack.config.js"
+      ~~~
